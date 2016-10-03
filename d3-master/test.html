@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+</style>
+<body>
+<script src="d3.min.js"></script>
+<script>
+
+    var data = [1,2,3,4,5,6,7,8,9];
+
+    var w = 960, h = 500;
+
+    var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+    function update(data) {
+
+        // DATA JOIN
+        // Join new data with old elements, if any.
+        var rect = svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x",0)
+                .attr("y", function(d,i) { return h - d*32; })
+                .attr("width", 20)
+                .attr("height", 100)
+                .attr("fill", function(d){
+                        return "rgb(70,0,"+(d*20)+")";
+                });
+
+        // UPDATE
+        // Update old elements as needed.
+        rect.attr("class", "update")
+                .transition()
+                .duration(750)
+                .attr("height", function(d) { return d * 32; })
+                .attr("x", function(d,i) { return i * 32; })
+                .attr("y", function(d,i) { return h - d*32; });
+
+        // ENTER
+        // Create new elements as needed.
+        rect.enter()
+                .append("rect")
+                .attr("class", "enter")
+                .attr("x",0)
+                .attr("y", function(d,i) { return h - d*32; })
+                .attr("width", 20)
+                .attr("height", 100)
+                .transition()
+                .duration(750);
+
+        // EXIT
+        // Remove old elements as needed.
+        rect.exit()
+                .attr("class", "exit")
+                .transition()
+                .duration(750)
+                .remove();
+    }
+
+    // The initial display.
+    update(data);
+
+    // Grab a random sample of letters from the alphabet, in alphabetical order.
+    setInterval(function() {
+        update(d3.shuffle(data)
+                .slice(0, Math.floor(Math.random() * 9))
+                .sort());
+    }, 1500);
+
+</script>
